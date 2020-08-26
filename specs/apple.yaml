@@ -1,0 +1,14 @@
+ns_name: apples
+ns_description: this is apples namespace
+resource_name: apple
+props: 
+  - name: id
+    type: Integer
+  - name: name
+    type: String
+  - name: catType
+    type: String
+list_api: list apples
+list_api_description: list all apples
+new_api: new apple
+new_api_description: insert a new apple

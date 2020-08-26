@@ -1,0 +1,51 @@
+title: Bookstore Application
+version: 1.0
+name: Bookstore
+connection_string: mysql+pymysql://root:newpass123@172.17.0.3/bookstore
+namespaces:
+  - ns_name: books
+    ns_description: books namespace
+    resource_name: book
+    props:
+      - name: idBook
+        type: Integer
+        primary_key: yes
+      - name: title
+        type: String
+        type_specs: (150)
+      - name: idAuthor
+        type: Integer
+        foreign_key: author.idAuthor
+    list_api: list books
+    list_api_description: list many books
+    new_api: create book
+    new_api_description: create a book
+    get_api: get book
+    get_api_description: find a book by idBook
+    update_api: modify book
+    update_api_description: modify book with specific idBook
+    delete_api: delete book
+    delete_api_description: delete a book by idBook
+  - ns_name: authors
+    ns_description: authors namespace
+    resource_name: author
+    props:
+      - name: idAuthor
+        type: Integer
+        primary_key: yes
+      - name: name
+        type: String
+        type_specs: (200)
+      - name: gender
+        type: Boolean
+    list_api: list authors
+    list_api_description: list many authors
+    new_api: create author
+    new_api_description: create a author
+    get_api: get author
+    get_api_description: find a author by idAuthor
+    update_api: modify author
+    update_api_description: modify author with specific idAuthor
+    delete_api: delete author
+    delete_api_description: delete a author by idAuthor
+

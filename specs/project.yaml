@@ -1,0 +1,39 @@
+title: test microservice
+version: 2.0
+name: application name
+connection_string: mysql+pymysql://root:newpass123@172.17.0.3/mydb
+namespaces:
+  - ns_name: oranges
+    ns_description: this is oranges namespace
+    resource_name: orange
+    props: 
+      - name: id
+        type: Integer
+        primary_key: yes
+      - name: name
+        type: String
+        type_specs: (100)
+      - name: orangeType
+        type: String
+        type_specs: (100)
+    list_api: list oranges
+    list_api_description: list all oranges
+    new_api: new orange
+    new_api_description: insert a new orange
+  - ns_name: apples
+    ns_description: this is apples namespace
+    resource_name: apple
+    props: 
+      - name: id
+        type: Integer
+        primary_key: yes
+      - name: name
+        type: String
+        type_specs: (100)
+      - name: appleType
+        type: String
+        type_specs: (100)
+    list_api: list apples
+    list_api_description: list all apples
+    new_api: new apple
+    new_api_description: insert a new apple
