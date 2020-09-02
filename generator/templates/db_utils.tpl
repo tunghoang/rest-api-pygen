@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
+from werkzeug.exceptions import *
+from sqlalchemy.exc import OperationalError
 
 class DbInstance:
   __instance = None
@@ -13,7 +15,9 @@ class DbInstance:
   @staticmethod
   def getInstance():
     if DbInstance.__instance is None:
-      DbInstance.__instance = DbInstance('{{connection_string}}')
+      connStr = '{{connection_string}}'
+      print('connect to db: ', connStr)
+      DbInstance.__instance = DbInstance(connStr)
     return DbInstance.__instance
 
   def session(self):
@@ -21,5 +25,10 @@ class DbInstance:
 
   def newSession(self):
     print('reset session')
-    self.__session.close()
-    self.__session =  self.Session()
+    try:
+      self.__session.close()
+      conn = self.engine.connect()
+      conn.close();
+      self.__session =  self.Session()
+    except OperationalError as e:
+      raise BadRequest("Error %s" % e.orig)

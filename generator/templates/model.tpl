@@ -9,5 +9,9 @@ def create_model(api):
     '{{prop['name']}}': fields.{{prop['type']}},
     {%- endif %}
     {%- endfor %} 
-  });
+  }, {%- if mask is defined -%}
+    mask='{{mask}}'
+  {%- else -%}
+    mask='*'
+  {%- endif -%});
   return model

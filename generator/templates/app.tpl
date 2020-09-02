@@ -5,7 +5,7 @@ from apis.db_utils import DbInstance
 db = DbInstance.getInstance()
 
 app = Flask("{{name}}")
-app.config['SERVER_NAME'] = 'localhost:8000'
+app.config['SERVER_NAME'] = {{server_name}}
 api.init_app(app)
 
 db.Base.metadata.create_all(db.engine)
