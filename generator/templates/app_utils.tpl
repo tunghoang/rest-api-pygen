@@ -18,8 +18,7 @@ def doLog(message, error = False):
     print("*** %s" % message)
   else:
     print("--- %s" % message)
-def doAuthenticate(request):
-  secret = request.cookies.get('key')
-  jwtKey = request.cookies.get('jwt')
-  doLog("Do AUTHENTICATION " + secret + " " + jwtKey)
-  return True
+def doClear(dict):
+  keys = [ k for k in dict ]
+  for key in keys:
+    del dict[key]

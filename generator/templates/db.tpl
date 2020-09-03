@@ -1,7 +1,10 @@
-from sqlalchemy import ForeignKey, Column, Integer, String, Boolean, Date, DateTime, String as Text
+from sqlalchemy import ForeignKey, Column, Integer, String, Boolean, Date, DateTime, Text
 from sqlalchemy.orm import relationship
+from sqlalchemy.exc import *
 from ..db_utils import DbInstance
+from ..app_utils import *
 from werkzeug.exceptions import *
+from flask import session,request,after_this_request
 
 __db = DbInstance.getInstance()
 
@@ -99,7 +102,7 @@ def __doNew(instance):
 
 def __doGet(id):
   instance = __db.session().query({{resource_name|capitalize}}).filter({{resource_name|capitalize}}.id{{resource_name|capitalize}} == id).scalar()
-  print("__doGet: {}".format(instance))
+  doLog("__doGet: {}".format(instance))
   return instance
 
 def __doUpdate(id, model):
@@ -119,49 +122,48 @@ def __doDelete(id):
 
 
 def list{{resource_name|capitalize}}s():
-  print("list DAO function")
+  doLog("list DAO function")
   try:
     return __doList()
   except OperationalError as e:
-    print(e.code, str(e))
+    doLog(e)
     __recover()
     return __doList()
 
 def new{{resource_name|capitalize}}(model):
-  print("new DAO function. model: {}".format(model))
+  doLog("new DAO function. model: {}".format(model))
   instance = {{resource_name|capitalize}}(model)
   res = False
   try:
     return __doNew(instance)
-  except:
-    print(e.code, str(e))
+  except OperationalError as e:
+    doLog(e)
     __recover()
     return __doNew(instance)
 
 def get{{resource_name|capitalize}}(id):
-  print("get DAO function", id)
+  doLog("get DAO function", id)
   try:
-    print(e.code, str(e))
     return __doGet(id)
-  except:
-    print(e.code, str(e))
+  except OperationalError as e:
+    doLog(e)
     __recover()
     return __doGet(id)
 
 def update{{resource_name|capitalize}}(id, model):
-  print("update DAO function. Model: {}".format(model))
+  doLog("update DAO function. Model: {}".format(model))
   try:
     return __doUpdate(id, model)
-  except:
-    print(e.code, str(e))
+  except OperationalError as e:
+    doLog(e)
     __recover()
     return __doUpdate(id, model)
 
 def delete{{resource_name|capitalize}}(id):
-  print("delete DAO function", id)
+  doLog("delete DAO function", id)
   try:
     return __doDelete(id)
-  except:
-    print(e.code, str(e))
+  except OperationalError as e:
+    doLog(e)
     __recover()
     return __doDelete(id)

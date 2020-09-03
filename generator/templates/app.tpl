@@ -1,12 +1,45 @@
-from flask import Flask
+from flask import Flask, session, request
 from apis import api
 from apis.db_utils import DbInstance
+from apis.app_utils import *
+from flask_session import Session
+from werkzeug.exceptions import *
+import os
 
 db = DbInstance.getInstance()
 
 app = Flask("{{name}}")
-app.config['SERVER_NAME'] = {{server_name}}
+app.config['SERVER_NAME'] = "{{server_name}}"
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = '/tmp'
+app.secret_key = os.urandom(16)
 api.init_app(app)
+
+Session(app)
+
+@app.before_request
+def before_request():
+  key = request.cookies.get('key')
+  jwt = request.cookies.get('jwt')
+  key = key if key is not None else request.headers.get('auth-key')
+  jwt = jwt if jwt is not None else request.headers.get('authorization')
+  no_auth_routes = ( 'doc', 'restplus_doc.static', 'specs' )
+
+  if request.endpoint in no_auth_routes:
+    return None
+  elif jwt is None or key is None:
+    raise Unauthorized("Invalid request")
+  elif key in session:
+    salt = session[key]
+    try:
+      sessionData = doParseJWT(jwt, salt)
+    except:
+      raise Unauthorized("Invalid session")
+  else:
+    raise Unauthorized("Not login")
+    
+
+  return None
 
 db.Base.metadata.create_all(db.engine)
 
