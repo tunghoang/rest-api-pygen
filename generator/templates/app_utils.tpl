@@ -1,9 +1,9 @@
 from hashlib import sha256
 from flask import jsonify
 from jwt import encode, decode
-SALT = 'hwman'
+SALT = '{{salt}}'
 def doHash(str):
-  str1 = 'SALT' + str
+  str1 = SALT + str
   hashObj = sha256(str1.encode('UTF-8'))
   return hashObj.hexdigest()
 def doGenJWT(obj, salt):
