@@ -54,6 +54,9 @@ def __doUpdate(id, model):
 
 def __doDelete(id):
   return {}
+
+def __doFind(model):
+  return []
 {% else %}
 
 class {{resource_name|capitalize}}(__db.Base):
@@ -117,6 +120,9 @@ def __doDelete(id):
   __db.session().delete(instance)
   __db.session().commit()
   return instance
+def __doFind(model):
+  results = __db.session().query({{resource_name|capitalize}}).filter_by(**model).all()
+  return results
 {% endif %}
 
 
@@ -167,3 +173,12 @@ def delete{{resource_name|capitalize}}(id):
     doLog(e)
     __recover()
     return __doDelete(id)
+
+def find{{resource_name|capitalize}}(id, model):
+  doLog("find DAO function %s %s" % (id, model))
+  try:
+    return __doFind(model)
+  except OperationalError as e:
+    doLog(e)
+    __recover()
+    return __doFind(model)

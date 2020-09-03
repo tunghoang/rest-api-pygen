@@ -44,4 +44,12 @@ def init_routes(api, model):
       '''{{delete_api_description}}'''
       return delete{{resource_name|capitalize}}(id)
     {%- endif %}
+    {%- if find_api is defined %}
+    @api.doc('{{find_api}}')
+    @api.expect(model)
+    @api.marshal_list_with(model)
+    def post(self, id):
+      '''{{find_api_description}}'''
+      return find{{resource_name|capitalize}}(id, api.payload)
+    {%- endif %}
     pass
