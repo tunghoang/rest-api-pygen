@@ -174,8 +174,8 @@ def delete{{resource_name|capitalize}}(id):
     __recover()
     return __doDelete(id)
 
-def find{{resource_name|capitalize}}(id, model):
-  doLog("find DAO function %s %s" % (id, model))
+def find{{resource_name|capitalize}}(model):
+  doLog("find DAO function %s" % model)
   try:
     return __doFind(model)
   except OperationalError as e:
