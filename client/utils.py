@@ -1,8 +1,21 @@
 import json
+import sys
 from yaml import load, dump, Loader, Dumper
 from http import client, cookies
 conn = client.HTTPConnection("localhost:8000")
 
+def request(method, path, payload, headers, process):
+  hdrs = {
+    'accept': "application/json",
+    'content-type': "application/json"
+  }
+  for k in headers:
+    hdrs[k] = headers[k]
+
+  conn.request(method, path, json.dumps(payload), hdrs)
+  res = conn.getresponse()
+  return process(res)
+  
 def post(path, payload,headers, process):
   hdrs = {
     'accept': "application/json",
@@ -15,7 +28,7 @@ def post(path, payload,headers, process):
   res = conn.getresponse()
   return process(res)
 
-def get(path, headers, process):
+def get(path, payload, headers, process):
   hdrs = {
     'accept': "application/json",
     'content-type': "application/json"
@@ -37,4 +50,14 @@ def writeYaml(fname, data):
     f.close()
 
 def toYaml(data):
-  print(dump(data, Dumper = Dumper))
+  return dump(data, Dumper = Dumper, allow_unicode=True)
+
+def end(message):
+  print(message)
+  sys.exit()
+
+def processResponse(res):
+  data = res.read()
+  if res.status == 200: 
+    return True, data
+  return False,data

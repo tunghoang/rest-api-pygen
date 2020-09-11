@@ -1,7 +1,7 @@
 from utils import *
 def processLoginResponse(res):
-  data = res.read()
-  if res.status == 200: 
+  success, data = processResponse(res)
+  if success: 
     cookieData = res.getheader('set-cookie')
     cookieParser = cookies.SimpleCookie()
     cookieParser.load(cookieData)
