@@ -4,11 +4,13 @@ from apis.db_utils import DbInstance
 from apis.app_utils import *
 from flask_session import Session
 from werkzeug.exceptions import *
+from werkzeug.contrib.fixers import ProxyFix
 import os
 
 db = DbInstance.getInstance()
 
 app = Flask("{{name}}")
+app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config['SERVER_NAME'] = "{{server_name}}"
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_FILE_DIR'] = '/tmp'
