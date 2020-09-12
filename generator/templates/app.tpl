@@ -25,9 +25,10 @@ def before_request():
   jwt = request.cookies.get('jwt')
   key = key if key is not None else request.headers.get('auth-key')
   jwt = jwt if jwt is not None else request.headers.get('authorization')
-  no_auth_routes = ( 'doc', 'restplus_doc.static', 'specs' )
+  no_auth_routes = ( '/', '/favicon.ico', '/swagger.json' )
+  no_auth_prefixes = ( '/swaggerui', )
 
-  if request.endpoint in no_auth_routes:
+  if request.path in no_auth_routes or matchOneOf(request.path, no_auth_prefixes) :
     return None
   elif jwt is None or key is None:
     raise Unauthorized("Invalid request")
@@ -39,7 +40,6 @@ def before_request():
       raise Unauthorized("Invalid session")
   else:
     raise Unauthorized("Not login")
-    
 
   return None
 

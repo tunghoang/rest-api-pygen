@@ -22,3 +22,8 @@ def doClear(dict):
   keys = [ k for k in dict ]
   for key in keys:
     del dict[key]
+def matchOneOf(str, prefixes):
+  for prefix in prefixes:
+    if str.startswith(prefix):
+      return True
+  return False
