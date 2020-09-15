@@ -2,7 +2,16 @@ import json
 import sys
 from yaml import load, dump, Loader, Dumper
 from http import client, cookies
-conn = client.HTTPConnection("localhost:8000")
+conn = None
+
+def initConn(base):
+  global conn
+  conn = client.HTTPConnection(base)
+
+def __getConn():
+  if conn == None:
+    raise Exception("call initConn first")
+  return conn
 
 def request(method, path, payload, headers, process):
   hdrs = {
@@ -12,8 +21,8 @@ def request(method, path, payload, headers, process):
   for k in headers:
     hdrs[k] = headers[k]
 
-  conn.request(method, path, json.dumps(payload), hdrs)
-  res = conn.getresponse()
+  __getConn().request(method, path, json.dumps(payload), hdrs)
+  res = __getConn().getresponse()
   return process(res)
   
 def post(path, payload,headers, process):
@@ -24,8 +33,8 @@ def post(path, payload,headers, process):
   for k in headers:
     hdrs[k] = headers[k]
 
-  conn.request('POST', path, payload, hdrs)
-  res = conn.getresponse()
+  __getConn().request('POST', path, payload, hdrs)
+  res = __getConn().getresponse()
   return process(res)
 
 def get(path, payload, headers, process):
@@ -36,8 +45,8 @@ def get(path, payload, headers, process):
   for k in headers:
     hdrs[k] = headers[k]
 
-  conn.request('GET', path, headers=hdrs)
-  res = conn.getresponse()
+  __getConn().request('GET', path, headers=hdrs)
+  res = __getConn().getresponse()
   return process(res)
 
 def loadYaml(fname):

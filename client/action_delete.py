@@ -4,11 +4,14 @@ def _doDelete(cookies, namespace, id):
   path = '/' + namespace + '/' + str(id)
   method = 'DELETE'
 
-  success, data = request(method, path, {}, {
-    'cookie': 'session=' + cookies['session'], 
-    'auth-key': cookies['key'], 
-    'authorization': cookies['jwt']
-  }, processResponse)
+  if cookies is not None and cookies.has_key('session') and cookies.has_key('key') and cookies.has_key('jwt'):
+    success, data = request(method, path, {}, {
+      'cookie': 'session=' + cookies['session'], 
+      'auth-key': cookies['key'], 
+      'authorization': cookies['jwt']
+    }, processResponse)
+  else:
+    success, data = request(method, path, {}, {}, processResponse)
 
   if success:
     print(toYaml(data.decode('utf-8')))

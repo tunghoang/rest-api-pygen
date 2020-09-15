@@ -4,11 +4,14 @@ def _doNew(cookies, namespace, instance):
   path = '/' + namespace + '/'
   method = 'POST'
 
-  success, data = request(method, path, instance, {
-    'cookie': 'session=' + cookies['session'], 
-    'auth-key': cookies['key'], 
-    'authorization': cookies['jwt']
-  }, processResponse)
+  if cookies is not None and cookies.has_key('session') and cookies.has_key('key') and cookies.has_key('jwt'):
+    success, data = request(method, path, instance, {
+      'cookie': 'session=' + cookies['session'], 
+      'auth-key': cookies['key'], 
+      'authorization': cookies['jwt']
+    }, processResponse)
+  else:
+    success, data = request(method, path, instance, { }, processResponse)
 
   if success:
     print(toYaml(data.decode('utf-8')))

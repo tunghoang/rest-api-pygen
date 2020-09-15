@@ -19,8 +19,10 @@ def main(args):
   cookiefile = ''
   queryfile = ''
   configfile = ''
+  base = 'localhost:8000'
+  no_cookies = False
   try:
-    optlist, _ = getopt(args, 'c:a:d:s:q:k:', ['config=', 'action=', 'file=', 'specs=', 'query=', 'cookies='])
+    optlist, _ = getopt(args, 'c:a:d:s:q:k:b:', ['config=', 'action=', 'file=', 'specs=', 'query=', 'cookies=', "base=", "no-cookies"])
     for opt in optlist:
       if opt[0] == '--config' or opt[0] == '-c':
         configfile = opt[1]
@@ -34,16 +36,22 @@ def main(args):
         queryfile = opt[1]
       elif opt[0] == '--cookies' or opt[0] == '-k':
         cookiefile = opt[1]
+      elif opt[0] == '--base' or opt[0] == '-b':
+        base = opt[1]
+      elif opt[0] == '--no-cookies':
+        no_cookies = True
   except:
     help()
 
   if len(configfile) > 0 :
     config = loadYaml(configfile)
-    action = action if len(action) > 0 else config['action']
+    action = action if action != None and len(action) > 0 else config['action']
     datafile = datafile if len(datafile) > 0 else config['datafile']
     specfile = specfile if len(specfile) > 0 else config['specfile']
     cookiefile = cookiefile if len(cookiefile) > 0 else config['cookiefile']
     queryfile = queryfile if len(queryfile) > 0 else config['queryfile']
+
+  initConn(base)
 
   if action == 'login':
     doLogin(cookiefile, datafile)
@@ -55,9 +63,6 @@ def main(args):
     doDelete(cookiefile, specfile, datafile)
   elif action == 'logout':
     doLogout(cookiefile)
-
-  #print("================ End ==============", file=sys.stderr)
-
 
 if __name__ == '__main__' :
   main(sys.argv[1:])
