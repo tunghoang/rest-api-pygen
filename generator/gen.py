@@ -71,7 +71,7 @@ with open(spec_file) as f:
   # gen gconfig
   gen_file(config = config, template_file = 'gconfig.tpl', output_file = 'gconfig.py')
   # gen app.py
-  gen_file(config) 
+  gen_file(config)
   # gen main__init__.py
   gen_file(config = config, template_file = 'main__init__.tpl', output_file = os.path.join(output_dir, '__init__.py'))
   # gen db_utils.py
@@ -82,3 +82,5 @@ with open(spec_file) as f:
     odir = os.path.join(output_dir, ns['ns_name'])
     prepare_dir(odir)
     gen_namespace(ns, odir)
+  if config.get('requirements'):
+    gen_file(config=config, template_file='requirements.tpl', output_file='requirements.txt')
