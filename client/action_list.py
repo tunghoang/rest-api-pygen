@@ -12,7 +12,7 @@ def doList(cookiefile, specfile, queryfile):
     if query['resource_name'] == ns['resource_name']:
       resourceMeta = ns['props']
       path = '/'+ns['ns_name']+'/'
-  if cookies is not None and cookies.has_key('session') and cookies.has_key('key') and cookies.has_key('jwt'):
+  if cookies is not None and 'session' in cookies and 'key' in cookies and 'jwt' in cookies:
     success, data = request(method, path, payload, {
       'cookie': 'session='+ cookies['session'], 
       'auth-key': cookies['key'], 

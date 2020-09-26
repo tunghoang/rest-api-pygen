@@ -4,7 +4,7 @@ def _doDelete(cookies, namespace, id):
   path = '/' + namespace + '/' + str(id)
   method = 'DELETE'
 
-  if cookies is not None and cookies.has_key('session') and cookies.has_key('key') and cookies.has_key('jwt'):
+  if cookies is not None and 'session' in cookies and 'key' in cookies and 'jwt' in cookies:
     success, data = request(method, path, {}, {
       'cookie': 'session=' + cookies['session'], 
       'auth-key': cookies['key'], 

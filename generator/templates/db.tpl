@@ -1,4 +1,5 @@
 from sqlalchemy import ForeignKey, Column, Integer, Float, String, Boolean, Date, DateTime, Text
+from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.exc import *
 from ..db_utils import DbInstance
@@ -72,6 +73,19 @@ class {{resource_name|capitalize}}(__db.Base):
   {%- endif %}
 {%- endfor %}
 
+  constraints = list()
+{%- for unique in uniques %}
+  constraints.append(UniqueConstraint({%- for key in unique['keys'] -%}
+    {%- if loop.last -%}
+      '{{key['name']}}'
+    {%- else -%}
+      '{{key['name']}}',
+    {%- endif -%}
+  {%- endfor -%}))
+{%- endfor %}
+  if len(constraints) > 0:
+    __table_args__ = tuple(constraints)
+ 
   def __init__(self, dictModel):
   {%- for prop in props %}
     if ("{{prop['name']}}" in dictModel) and (dictModel["{{prop['name']}}"] != None):
@@ -125,8 +139,6 @@ def __doFind(model):
   return results
 {% endif %}
 
-
-
 def list{{resource_name|capitalize}}s():
   doLog("list DAO function")
   try:
@@ -135,6 +147,9 @@ def list{{resource_name|capitalize}}s():
     doLog(e)
     __recover()
     return __doList()
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e
 
 def new{{resource_name|capitalize}}(model):
   doLog("new DAO function. model: {}".format(model))
@@ -146,6 +161,9 @@ def new{{resource_name|capitalize}}(model):
     doLog(e)
     __recover()
     return __doNew(instance)
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e
 
 def get{{resource_name|capitalize}}(id):
   doLog("get DAO function", id)
@@ -155,6 +173,9 @@ def get{{resource_name|capitalize}}(id):
     doLog(e)
     __recover()
     return __doGet(id)
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e
 
 def update{{resource_name|capitalize}}(id, model):
   doLog("update DAO function. Model: {}".format(model))
@@ -164,6 +185,9 @@ def update{{resource_name|capitalize}}(id, model):
     doLog(e)
     __recover()
     return __doUpdate(id, model)
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e
 
 def delete{{resource_name|capitalize}}(id):
   doLog("delete DAO function", id)
@@ -173,6 +197,9 @@ def delete{{resource_name|capitalize}}(id):
     doLog(e)
     __recover()
     return __doDelete(id)
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e
 
 def find{{resource_name|capitalize}}(model):
   doLog("find DAO function %s" % model)
@@ -182,3 +209,6 @@ def find{{resource_name|capitalize}}(model):
     doLog(e)
     __recover()
     return __doFind(model)
+  except SQLAlchemyError as e:
+    __db.session().rollback()
+    raise e

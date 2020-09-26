@@ -4,7 +4,7 @@ def _doNew(cookies, namespace, instance):
   path = '/' + namespace + '/'
   method = 'POST'
 
-  if cookies is not None and cookies.has_key('session') and cookies.has_key('key') and cookies.has_key('jwt'):
+  if cookies is not None and 'session' in cookies and 'key' in cookies and 'jwt' in cookies:
     success, data = request(method, path, instance, {
       'cookie': 'session=' + cookies['session'], 
       'auth-key': cookies['key'], 
