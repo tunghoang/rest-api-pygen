@@ -9,9 +9,11 @@ def doList(cookiefile, specfile, queryfile):
   method = query['method'] if 'method' in query else 'GET'
   payload = query['payload'] if 'payload' in query else None
   for ns in specs['namespaces']:
+    print(ns['resource_name'], query['resource_name'])
     if query['resource_name'] == ns['resource_name']:
       resourceMeta = ns['props']
       path = '/'+ns['ns_name']+'/'
+
   if cookies is not None and 'session' in cookies and 'key' in cookies and 'jwt' in cookies:
     success, data = request(method, path, payload, {
       'cookie': 'session='+ cookies['session'], 
