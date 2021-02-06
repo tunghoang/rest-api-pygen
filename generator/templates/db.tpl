@@ -147,6 +147,10 @@ def list{{resource_name|capitalize}}s():
     doLog(e)
     __recover()
     return __doList()
+  except InterfaceError as e:
+    doLog(e)
+    __recover()
+    return __doList()
   except SQLAlchemyError as e:
     __db.session().rollback()
     raise e
@@ -170,6 +174,10 @@ def get{{resource_name|capitalize}}(id):
   try:
     return __doGet(id)
   except OperationalError as e:
+    doLog(e)
+    __recover()
+    return __doGet(id)
+  except InterfaceError as e:
     doLog(e)
     __recover()
     return __doGet(id)
