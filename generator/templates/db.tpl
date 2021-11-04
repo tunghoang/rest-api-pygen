@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Integer, Float, String, Boolean, Date, DateTime, Text
+from sqlalchemy import ForeignKey, Column, BigInteger, Integer, Float, String, Boolean, Date, DateTime, Text
 from sqlalchemy.schema import UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.exc import *
@@ -15,9 +15,17 @@ class {{resource_name|capitalize}}:
   {%- if prop['primary_key'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, primary_key = True)
   {%- elif prop['foreign_key'] is defined %}
+    {%- if prop['notnull'] %}
+  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False, ForeignKey('{{prop['foreign_key']}}'))
+    {%- else %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, ForeignKey('{{prop['foreign_key']}}'))
+    {%- endif %}
   {%- else %}
+    {%- if prop['notnull'] %}
+  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False)
+    {%- else %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}})
+    {%- endif %}
   {%- endif %}
 {%- endfor %}
 
@@ -110,7 +118,9 @@ def __recover():
   __db.newSession()
 
 def __doList():
-  return __db.session().query({{resource_name|capitalize}}).all()
+  result = __db.session().query({{resource_name|capitalize}}).all()
+  __db.session().commit()
+  return result  
   
 def __doNew(instance):
   __db.session().add(instance)
@@ -120,6 +130,7 @@ def __doNew(instance):
 def __doGet(id):
   instance = __db.session().query({{resource_name|capitalize}}).filter({{resource_name|capitalize}}.id{{resource_name|capitalize}} == id).scalar()
   doLog("__doGet: {}".format(instance))
+  __db.session().commit()
   return instance
 
 def __doUpdate(id, model):
@@ -136,6 +147,7 @@ def __doDelete(id):
   return instance
 def __doFind(model):
   results = __db.session().query({{resource_name|capitalize}}).filter_by(**model).all()
+  __db.session().commit()
   return results
 {% endif %}
 

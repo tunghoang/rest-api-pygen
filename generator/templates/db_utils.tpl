@@ -3,11 +3,10 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from werkzeug.exceptions import *
 from sqlalchemy.exc import OperationalError
-from configparser import ConfigParser
 
-config = ConfigParser()
-config.read('config.ini')
-print(config)
+from .config_utils import config
+
+import os
 class DbInstance:
   __instance = None
   def __init__(self, conn_str):
@@ -19,7 +18,8 @@ class DbInstance:
   @staticmethod
   def getInstance():
     if DbInstance.__instance is None:
-      connStr = config.get('Default', 'connection_string', fallback='{{connection_string}}')
+      connStr = os.getenv('DB_URL')
+      connStr = config.get('Default', 'connection_string', fallback='{{connection_string}}') if connStr is None else connStr
       print('connect to db: ', connStr)
       DbInstance.__instance = DbInstance(connStr)
     return DbInstance.__instance

@@ -74,6 +74,8 @@ with open(spec_file) as f:
   gen_file(config) 
   # gen main__init__.py
   gen_file(config = config, template_file = 'main__init__.tpl', output_file = os.path.join(output_dir, '__init__.py'))
+  # gen config_utils.py
+  gen_file(config = config, template_file = 'config_utils.tpl', output_file = os.path.join(output_dir, 'config_utils.py'))
   # gen db_utils.py
   gen_file(config = config, template_file = 'db_utils.tpl', output_file = os.path.join(output_dir, 'db_utils.py'))
   # gen app_utils.py
