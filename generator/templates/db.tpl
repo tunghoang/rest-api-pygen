@@ -14,18 +14,14 @@ class {{resource_name|capitalize}}:
 {%- for prop in props %}
   {%- if prop['primary_key'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, primary_key = True)
-  {%- elif prop['foreign_key'] is defined %}
-    {%- if prop['notnull'] %}
-  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False, ForeignKey('{{prop['foreign_key']}}'))
-    {%- else %}
+  {%- elif prop['foreign_key'] is defined and prop['notnull'] %}
+  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, ForeignKey('{{prop['foreign_key']}}'), nullable=False)
+  {%- elif prop['foreign_key'] is defined and not prop['notnull'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, ForeignKey('{{prop['foreign_key']}}'))
-    {%- endif %}
-  {%- else %}
-    {%- if prop['notnull'] %}
+  {%- elif prop['foreign_key'] is not defined and prop['notnull'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False)
-    {%- else %}
+  {%- elif prop['foreign_key'] is not defined and not prop['notnull'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}})
-    {%- endif %}
   {%- endif %}
 {%- endfor %}
 
@@ -75,9 +71,17 @@ class {{resource_name|capitalize}}(__db.Base):
   {%- if prop['primary_key'] %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, primary_key = True)
   {%- elif prop['foreign_key'] is defined %}
+    {%- if prop['notnull'] %}
+  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False, ForeignKey('{{prop['foreign_key']}}'))
+    {%- else %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, ForeignKey('{{prop['foreign_key']}}'))
+    {%- endif %}
   {%- else %}
+    {%- if prop['notnull'] %}
+  {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}}, nullable=False)
+    {%- else %}
   {{prop['name']}} = Column({{prop['type']}}{{prop['type_specs']}})
+    {%- endif %}
   {%- endif %}
 {%- endfor %}
 

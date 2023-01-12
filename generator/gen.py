@@ -41,6 +41,7 @@ def merge_content(old_content, new_content):
   return result
   
 def gen_file(config, template_file='app.tpl', output_file='app.py'):
+  print(f'gen_file: {template_file} {output_file}')
   output = gen_file_content(config, template_file)
   f = open(output_file, 'w')
   f.write(output)
